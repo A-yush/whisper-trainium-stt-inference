@@ -1,0 +1,26 @@
+# Core dependencies for Whisper on Trainium1
+# Note: PyTorch, torch-neuronx, and neuronx-distributed-inference
+# are pre-installed in /opt/aws_neuronx_venv_pytorch_2_9_nxd_inference
+
+# Audio processing
+soundfile>=0.13.0
+scipy>=1.17.0
+
+# Evaluation
+jiwer>=4.0.0
+
+# Whisper dependency (required by neuronx-distributed-inference)
+openai-whisper>=20250625
+
+# Model loading
+transformers>=4.50.0
+
+# Optional: For REST API example
+# fastapi>=0.100.0
+# uvicorn>=0.23.0
+
+# Optional: For monitoring
+# prometheus-client>=0.17.0
+
+# Optional: For configuration
+# pyyaml>=6.0

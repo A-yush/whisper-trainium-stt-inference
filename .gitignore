@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Models (large files)
+models/whisper-hindi2hinglish-swift/
+models/whisper-hindi2hinglish-swift-compiled-*/
+*.safetensors
+*.pt
+*.bin
+
+# Compiled Neuron artifacts
+*.neff
+neuron_cache/
+/tmp/neuron_cache/
+
+# Logs
+logs/
+*.log
+
+# Test outputs
+benchmark_results.json
+batch_results.json
+*.wav.tmp
+/tmp/warmup.wav
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+*.pem
+credentials.json
+
+# Large test files (optional - uncomment if you want to exclude)
+# test_audio/benchmark/*.mp3
+# test_audio/benchmark/*.wav

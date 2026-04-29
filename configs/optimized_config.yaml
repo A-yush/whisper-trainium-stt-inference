@@ -1,0 +1,92 @@
+# Optimized configuration for Whisper on Trainium1
+# Use this for maximum performance (15-30% latency reduction)
+
+model:
+  # Model paths
+  base_path: "models/whisper-hindi2hinglish-swift"
+  compiled_path: "models/whisper-hindi2hinglish-swift-compiled-tp2-optimized"
+
+  # Model parameters
+  language: "hi"  # Hindi input → Hinglish output
+  task: "transcribe"  # transcribe or translate
+
+neuron:
+  # Hardware configuration
+  tp_degree: 2  # Tensor parallelism (2 for trn1.2xlarge)
+  batch_size: 1  # Optimal for latency
+
+  # Precision
+  torch_dtype: "float16"  # FP16 for speed/accuracy balance
+
+  # Optimizations (Phase 2)
+  async_mode: true  # Enable async I/O for CPU-NeuronCore overlap
+  k_cache_transposed: true  # Optimize KV cache layout
+
+compilation:
+  # Compiler settings
+  cache_dir: "/tmp/neuron_cache"
+
+  # Optimization flags (aggressive)
+  enable_fast_math: true  # Enable fast math operations
+  enable_saturate_infinity: true  # Saturate infinities
+
+  # Compiler flags (exported as NEURON_CC_FLAGS)
+  compiler_flags:
+    - "--enable-fast-math"
+    - "--enable-saturate-infinity"
+    - "--enable-mixed-precision-accumulation"
+
+  # Warmup
+  warmup_iterations: 3  # Additional warmup for stability
+
+inference:
+  # Audio preprocessing
+  sample_rate: 16000  # Whisper requirement
+  mono: true  # Convert stereo to mono
+
+  # Output
+  verbose: false  # Disable progress bars
+
+service:
+  # Service configuration
+  max_workers: 1  # Single worker for single instance
+
+  # Monitoring
+  enable_metrics: true
+  log_level: "INFO"
+
+  # Timeouts (seconds)
+  initialization_timeout: 60
+  transcription_timeout: 300
+
+  # Health check
+  health_check_interval: 30
+
+# Performance targets (optimized)
+performance:
+  target_rtf: 0.010  # Target Real-Time Factor (improved)
+  target_p90_latency: 1.1  # P90 latency in seconds (improved)
+  target_throughput: 2.2  # Requests per second (improved)
+
+# Optimization notes
+notes: |
+  This configuration enables all performance optimizations:
+
+  1. Async Mode: Overlaps CPU preprocessing with NeuronCore inference
+     - Expected improvement: 5-15% latency reduction
+     - No accuracy impact
+
+  2. KV Cache Transposition: Optimizes memory layout for decoder
+     - Expected improvement: 5-10% latency reduction
+     - No accuracy impact
+
+  3. Fast Math: Enables faster floating-point operations
+     - Expected improvement: 5-10% latency reduction
+     - Minimal accuracy impact (<1% WER increase)
+
+  Total expected improvement: 15-30% latency reduction
+
+  Trade-offs:
+  - Slightly longer compilation time (no impact on inference)
+  - Requires WER validation (run validation script)
+  - May need recompilation if switching between optimized/baseline
