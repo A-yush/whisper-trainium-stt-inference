@@ -21,16 +21,45 @@ This repository provides a **production-ready deployment pipeline** for running 
 
 ---
 
-## 📊 Performance Highlights
+## 📊 Benchmark Results
+
+**Model:** Oriserve/Whisper-Hindi2Hinglish-Swift (Whisper Base)  
+**Hardware:** AWS Trainium1 (trn1.2xlarge) - 2 NeuronCores  
+**Total Audio Files:** 31 (21 original + 10 AWS speech files)
+
+### Overall Performance
 
 | Metric | Value |
 |--------|-------|
-| **Average Latency** | 513ms |
-| **P90 Latency** | 1.4 seconds |
-| **Real-Time Factor (RTF)** | 0.011x (93.5x faster than real-time) |
+| **Total Files Processed** | 31 |
+| **Total Audio Duration** | 1,551.9 seconds (~25.9 minutes) |
+| **Total Processing Time** | 15.9 seconds |
+| **Average Processing Time** | 513.1ms |
+| **P50 Processing Time** | 153.2ms |
+| **P90 Processing Time** | 1,417.2ms |
+| **P99 Processing Time** | 3,200.4ms |
+| **Average RTF** | 0.011x |
 | **Throughput** | 1.95 requests/second |
-| **Hardware** | AWS trn1.2xlarge (2 NeuronCores) |
-| **Model** | Whisper Base (74M parameters) |
+| **Speed vs Real-time** | 93.5x faster |
+
+### Performance by Duration Range
+
+| Duration Range | Files | Avg Audio Duration | Avg Processing | P90 Processing | P99 Processing | Avg RTF |
+|----------------|-------|-------------------|----------------|----------------|----------------|---------|
+| **0-10s**      | 5     | 5.00s             | 75.4ms         | 78.3ms         | 79.2ms         | 0.015x  |
+| **10-30s**     | 15    | 17.21s            | 170.0ms        | 237.2ms        | 398.6ms        | 0.010x  |
+| **30-60s**     | 3     | 55.13s            | 484.6ms        | 645.4ms        | 702.6ms        | 0.009x  |
+| **60s+**       | 8     | 137.93s           | 1,440.8ms      | 2,201.3ms      | 3,774.9ms      | 0.010x  |
+
+### Key Insights
+
+✅ **93.5x faster than real-time** processing  
+✅ **Sub-second latency** for most audio lengths  
+✅ **Consistent RTF** across duration ranges (~0.010x)  
+✅ **P99 latency under 4 seconds** even for 171-second audio  
+✅ **1.95 requests/second** throughput on single instance
+
+**Full benchmark details:** See [docs/BENCHMARK_RESULTS.md](docs/BENCHMARK_RESULTS.md)
 
 ---
 
@@ -65,7 +94,7 @@ python benchmarks/test_inference.py test_audio/benchmark/audio_01_0-10s.mp3
 
 **Result:** Your first STT transcription in under 200ms!
 
-**For detailed step-by-step instructions, see [DEPLOYMENT_GUIDE_REPO.md](DEPLOYMENT_GUIDE_REPO.md)**
+**For detailed step-by-step instructions, see [DEPLOYMENT_GUIDE_REPO.md](docs/DEPLOYMENT_GUIDE_REPO.md)**
 
 ---
 
@@ -74,7 +103,6 @@ python benchmarks/test_inference.py test_audio/benchmark/audio_01_0-10s.mp3
 ```
 whisper-trainium-deployment/
 ├── README.md                           # This file - Getting started guide
-├── DEPLOYMENT_GUIDE_REPO.md            # Complete step-by-step deployment guide
 ├── QUICK_START.md                      # 5-minute quick start guide
 ├── LICENSE                             # MIT License
 ├── requirements.txt                    # Python dependencies
@@ -98,6 +126,7 @@ whisper-trainium-deployment/
 │   └── optimized_config.yaml         # Performance-optimized config
 │
 ├── docs/                             # Documentation
+│   ├── DEPLOYMENT_GUIDE_REPO.md      # Complete step-by-step deployment guide
 │   ├── DEPLOYMENT_GUIDE.md           # Original detailed guide
 │   └── BENCHMARK_RESULTS.md          # Detailed performance analysis
 │
@@ -120,7 +149,7 @@ whisper-trainium-deployment/
 
 ## 🎓 Deployment Phases
 
-**See [DEPLOYMENT_GUIDE_REPO.md](DEPLOYMENT_GUIDE_REPO.md) for complete step-by-step instructions**
+**See [DEPLOYMENT_GUIDE_REPO.md](docs/DEPLOYMENT_GUIDE_REPO.md) for complete step-by-step instructions**
 
 ### Phase 1: Environment Setup (5 minutes)
 ```bash
@@ -183,7 +212,7 @@ python examples/batch_processing.py /path/to/audio/folder
 
 **Total Time:** 10-15 minutes from clone to production
 
-**For detailed instructions, see [DEPLOYMENT_GUIDE_REPO.md](DEPLOYMENT_GUIDE_REPO.md)**
+**For detailed instructions, see [DEPLOYMENT_GUIDE_REPO.md](docs/DEPLOYMENT_GUIDE_REPO.md)**
 
 ---
 
@@ -235,30 +264,7 @@ print(result['text'])
 python examples/batch_processing.py /path/to/audio/folder
 ```
 
-**See [DEPLOYMENT_GUIDE_REPO.md](DEPLOYMENT_GUIDE_REPO.md) for more detailed code examples.**
-
----
-
-## 📈 Benchmark Results
-
-### Performance by Audio Duration
-
-| Duration Range | Files | Avg Latency | P90 Latency | P99 Latency | Avg RTF |
-|----------------|-------|-------------|-------------|-------------|---------|
-| **0-10s**      | 5     | 75.4ms      | 78.3ms      | 79.2ms      | 0.015x  |
-| **10-30s**     | 15    | 170.0ms     | 237.2ms     | 398.6ms     | 0.010x  |
-| **30-60s**     | 3     | 484.6ms     | 645.4ms     | 702.6ms     | 0.009x  |
-| **60s+**       | 8     | 1,440.8ms   | 2,201.3ms   | 3,774.9ms   | 0.010x  |
-
-### Key Insights
-
-✅ **93.5x faster than real-time** processing  
-✅ **Sub-second latency** for most audio lengths  
-✅ **Consistent RTF** across duration ranges (~0.010x)  
-✅ **P99 latency under 4 seconds** even for 171-second audio  
-✅ **1.95 requests/second** throughput on single instance  
-
-**Full benchmark details:** See [docs/BENCHMARK_RESULTS.md](docs/BENCHMARK_RESULTS.md)
+**See [DEPLOYMENT_GUIDE_REPO.md](docs/DEPLOYMENT_GUIDE_REPO.md) for more detailed code examples.**
 
 ---
 
@@ -411,18 +417,6 @@ python -c "import torch_neuronx; import neuronx_distributed_inference"
 
 **With Spot Instances (70% savings):**
 - **Cost per 1,000 transcriptions: $0.08**
-
-### Cost Comparison
-
-| Platform | Cost per 1,000 mins | Notes |
-|----------|---------------------|-------|
-| **Trainium1 (Spot)** | **$4.80** | This solution |
-| Trainium1 (On-Demand) | $16.20 | This solution |
-| AWS Transcribe | $14.40 | Managed service |
-| GPU (g5.xlarge) | $20-30 | T4 GPU equivalent |
-| CPU (c6i.8xlarge) | $50-80 | 32 vCPU instance |
-
-**💰 Cost Savings: 70-85% vs alternatives**
 
 ---
 
@@ -641,7 +635,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 
 ## 🔗 Quick Links
 
-- **[📖 Deployment Guide](DEPLOYMENT_GUIDE_REPO.md)** - Complete step-by-step instructions
+- **[📖 Deployment Guide](docs/DEPLOYMENT_GUIDE_REPO.md)** - Complete step-by-step instructions
 - **[⚡ Quick Start](QUICK_START.md)** - 5-minute quick start
 - **[📊 Benchmark Results](docs/BENCHMARK_RESULTS.md)** - Detailed performance data
 - **[📚 Original Guide](docs/DEPLOYMENT_GUIDE.md)** - Comprehensive reference
@@ -669,7 +663,7 @@ python benchmarks/test_inference.py test_audio/benchmark/audio_01_0-10s.mp3
 # You're ready for production! 🚀
 ```
 
-**For detailed instructions:** [DEPLOYMENT_GUIDE_REPO.md](DEPLOYMENT_GUIDE_REPO.md)
+**For detailed instructions:** [DEPLOYMENT_GUIDE_REPO.md](docs/DEPLOYMENT_GUIDE_REPO.md)
 
 ---
 
